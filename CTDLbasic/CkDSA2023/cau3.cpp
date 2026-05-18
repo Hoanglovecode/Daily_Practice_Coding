@@ -1,103 +1,110 @@
-#include <iostream>
+#include <bits/stdc++.h>
+#include <queue>
 using namespace std;
-//b
 struct Node{
     int data;
-    Node *left, *right;
+    Node *l;
+    Node *r;
 };
-//c
-Node* createNode(int x){
-    Node* p = new Node;
-    p->data = x;
-    p->left = p->right = NULL;
+typedef struct Node* node;
+node createnode(int x){
+    node p=new Node;
+    p->data=x;
+    p->l=nullptr;
+    p->r=nullptr;
     return p;
 }
-
-void insert(Node* &root, int x){
-    if(root == NULL){
-        root = createNode(x);
+void insert(node &root,int x){
+    if(root==nullptr){
+        root=createnode(x);
         return;
     }
-
-    if(x < root->data)
-        insert(root->left, x);
-    else if(x > root->data)
-        insert(root->right, x);
+    if(x<root->data)insert(root->l,x);
+    else insert(root->r,x);
 }
-//d
-int findMin(Node* root){
-    while(root->left)
-        root = root->left;
+int findmin(node root){
+    while(root->l)
+        root=root->l;
     return root->data;
 }
-//d
-int findMax(Node* root){
-    while(root->right)
-        root = root->right;
+int findmax(node root){
+    while(root->r)
+        root=root->r;
     return root->data;
 }
-//e
-Node* deleteNode(Node* root, int k){
-    if(root == NULL) return NULL;
-
-    if(k < root->data)
-        root->left = deleteNode(root->left, k);
-
-    else if(k > root->data)
-        root->right = deleteNode(root->right, k);
-
-    else{
-        if(root->left == NULL){
-            Node* temp = root->right;
-            delete root;
-            return temp;
-        }
-
-        if(root->right == NULL){
-            Node* temp = root->left;
-            delete root;
-            return temp;
-        }
-
-        Node* temp = root->right;
-
-        while(temp->left)
-            temp = temp->left;
-
-        root->data = temp->data;
-
-        root->right = deleteNode(root->right, temp->data);
+//delete node have value x
+node deleteNode(node root,int k){
+    if(root==nullptr)return nullptr;
+    if(k<root->data){
+        root->l=deleteNode(root->l,k);
     }
-
+    else if(k>root->data){
+        root->r=deleteNode(root->r,k);
+    }
+    else{
+        if(root->l==nullptr&&root->r==nullptr){
+            delete root;
+            return nullptr;
+        }
+        else if(root->l==nullptr){
+            node tmp=root->r;
+            delete root;
+            return tmp;
+        }
+        else if(root->r=nullptr){
+            node tmp=root->l;
+            delete root;
+            return tmp;
+        }
+        else{
+            node tmp=root->r;
+            while(tmp->l){
+                tmp=tmp->l;
+            }
+            root->data=tmp->data;
+            root->r=deleteNode(root->r,tmp->data);
+        }
+    }
     return root;
 }
-//f
-void inorder(Node* root){
+//print current root
+void printArrayTree(node root){
+    if(root==nullptr)return;
+    queue<node>q;
+    q.push(root);
+    cout<<"[";
+    while(!q.empty()){
+        node cur=q.front();
+        q.pop();
+        cout<<cur->data;
+        if(!q.empty()||cur->l||cur->r)cout<<",";
+        if(cur->l)q.push(cur->l);
+        if(cur->r)q.push(cur->r);
+    }
+    cout<<"]";
+}
+//print inorder root
+void inorder(node root){
     if(root){
-        inorder(root->left);
-        cout << root->data << " ";
-        inorder(root->right);
+        inorder(root->l);
+        cout<<root->data<<' ';
+        inorder(root->r);
     }
 }
-
 int main(){
-    int a[] = {46,90,60,70,23,40,61,80};
-
-    Node* root = NULL;
-
-    for(int x : a)
-        insert(root, x);
-
-    cout << "Tang dan: ";
-    inorder(root);
-
-    cout << "\nMin = " << findMin(root);
-    cout << "\nMax = " << findMax(root);
-
-    root = deleteNode(root, 70);
-
-    cout << "\nSau khi xoa 70: ";
-    inorder(root);
-
-    return 0;
+   int a[]={46,90,60,70,23,40,61,80};
+   node root=nullptr;
+   for(int x:a)insert(root,x);
+   printArrayTree(root);
+   cout<<"\nMin value="<<findmin(root);
+   cout<<"\nMax value="<<findmax(root);
+   int x;
+   cout<<"\nWhich node value you want to delete?"<<endl;
+   cout<<"Value:";
+   cin>>x;
+   root=deleteNode(root,x);
+   cout<<"Tree currently:";
+   printArrayTree(root);
+   cout<<"\nInorder Tree:";inorder(root);
+   return 0;
 }
