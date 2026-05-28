@@ -51,7 +51,7 @@ node deleteNode(node root,int k){
             delete root;
             return tmp;
         }
-        else if(root->r=nullptr){
+        else if(root->r==nullptr){
             node tmp=root->l;
             delete root;
             return tmp;
@@ -67,7 +67,7 @@ node deleteNode(node root,int k){
     }
     return root;
 }
-//print current root
+//print current root giống preorder
 void printArrayTree(node root){
     if(root==nullptr)return;
     queue<node>q;
@@ -91,6 +91,22 @@ void inorder(node root){
         inorder(root->r);
     }
 }
+//print preorder root
+void preorder(node root){
+    if(root){
+        cout<<root->data<<' ';
+        preorder(root->l);
+        preorder(root->r);
+    }
+}
+//print postorder root
+void postorder(node root){
+    if(root){
+        postorder(root->l);
+        postorder(root->r);
+        cout<<root->data<<' ';
+    }
+}
 int main(){
    int a[]={46,90,60,70,23,40,61,80};
    node root=nullptr;
@@ -106,5 +122,7 @@ int main(){
    cout<<"Tree currently:";
    printArrayTree(root);
    cout<<"\nInorder Tree:";inorder(root);
+   cout<<"\nPreorder Tree:";preorder(root);
+   cout<<"\nPostorder Tree:";postorder(root);
    return 0;
 }
